@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="3dp"
+    android:paddingTop="3dp"
+    android:background="#ffffff">
+
+    <com.example.simplereader.UI.MyBottomViewGroup
+        android:id="@+id/view_group"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <com.example.simplereader.UI.MyBottomView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:text="本地"
+            app:default_state="true"
+            app:default_ic="@drawable/ic_test0"
+            app:pitch_ic="@drawable/ic_test1"
+            />
+
+        <com.example.simplereader.UI.MyBottomView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:text="网络"
+            app:default_ic="@drawable/ic_test0"
+            app:pitch_ic="@drawable/ic_test1"
+            />
+
+        <com.example.simplereader.UI.MyBottomView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:text="找书"
+            app:default_ic="@drawable/ic_test0"
+            app:pitch_ic="@drawable/ic_test1"
+            />
+
+    </com.example.simplereader.UI.MyBottomViewGroup>
+
+
+</LinearLayout>

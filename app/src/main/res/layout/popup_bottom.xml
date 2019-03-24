@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#383838">
+
+    <!--目录-->
+    <LinearLayout
+        android:id="@+id/catalogues"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp">
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/ic_catalogue"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/img_bg_selector"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/catalogues"
+            android:layout_gravity="center"
+            android:textColor="@color/default_text_color"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <!--夜间模式-->
+    <LinearLayout
+        android:id="@+id/day_night_mode"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp">
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/ic_catalogue"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/img_bg_selector"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/day_night"
+            android:layout_gravity="center"
+            android:textColor="@color/default_text_color"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <!--换源-->
+    <LinearLayout
+        android:id="@+id/change_resourse"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp">
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/ic_catalogue"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/img_bg_selector"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_source"
+            android:layout_gravity="center"
+            android:textColor="@color/default_text_color"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <!--横竖屏-->
+    <LinearLayout
+        android:id="@+id/horizontal_vertical_mode"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp">
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/ic_catalogue"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/img_bg_selector"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/horizontal_vertical"
+            android:layout_gravity="center"
+            android:textColor="@color/default_text_color"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <!--设置-->
+    <LinearLayout
+        android:id="@+id/settings"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp">
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/ic_catalogue"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <ImageView
+                android:layout_gravity="center"
+                android:src="@drawable/img_bg_selector"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:layout_gravity="center"
+            android:textColor="@color/default_text_color"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

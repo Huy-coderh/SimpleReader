@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.simplereader">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:usesCleartextTraffic="true"
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="简单阅读"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"
+            android:label="简单阅读">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".BaseActivity"/>
+
+        <activity android:name=".FileBrowserActivity"
+            android:theme="@style/ActionBarActivityTheme"
+            android:label="本地上传">
+        </activity>
+
+        <activity android:name=".TxtFileScanActivity"
+            android:theme="@style/ActionBarActivityTheme"
+            android:label="本地txt文件">
+        </activity>
+
+        <activity android:name=".ReaderActivity"/>
+
+        <activity android:name=".SearchActivity"/>
+
+        <activity android:name=".BookActivity"
+            android:theme="@style/ActionBarActivityTheme"
+            android:label="简单阅读"/>
+    </application>
+
+</manifest>

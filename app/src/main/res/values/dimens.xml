@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_text_size">12sp</dimen>
+
+    <dimen name="default_loading_width">40dp</dimen>
+    <dimen name="default_loading_height">40dp</dimen>
+</resources>

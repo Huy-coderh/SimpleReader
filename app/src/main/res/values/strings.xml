@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SimpleReader</string>
+    <string name="day_night_mode">夜间模式</string>
+    <string name="catalogues">目录</string>
+    <string name="day_night">夜间</string>
+    <string name="change_source">换源</string>
+    <string name="horizontal_vertical">竖屏</string>
+    <string name="settings">设置</string>
+</resources>

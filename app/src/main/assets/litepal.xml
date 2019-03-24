@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+
+    <dbname value="BookShelf"/>
+    <version value="1"/>
+    <list>
+        <mapping class="com.example.simplereader.db.DBLocalBook"/>
+        <mapping class="com.example.simplereader.db.DBWebBook"/>
+    </list>
+
+</litepal>
