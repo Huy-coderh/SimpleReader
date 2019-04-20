@@ -48,11 +48,6 @@ public class BookshelfRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         this.mOnItemLongClickListener = listener;
     }
 
-    public void updateData(List<BaseBook> baseBooks){
-        this.baseBookList = baseBooks;
-        this.notifyDataSetChanged();
-    }
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -81,8 +76,6 @@ public class BookshelfRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     public int getItemCount() {
         return baseBookList.size();
     }
-
-
 
     @Override
     public void onClick(View v) {

@@ -1,15 +1,13 @@
 package com.example.simplereader.util;
 
-import com.example.simplereader.sitebook.Book;
-
 import java.util.List;
 
-public interface StateCallBack {
+public interface StateCallBack<T> {
 
-    void onProcess();
+    void onSuccess(T t);
 
-    void onSuccess(List<Book> bookList);
+    void onSucceed();
 
-    void onFailed();
+    void onFailed(String s);
 
 }

@@ -12,9 +12,15 @@ public class SpHelper {
     private SharedPreferences readInfo;
     private SharedPreferences.Editor editor ;
 
-    private static SpHelper instance;
+    //private static SpHelper instance;
 
-    private SpHelper(){
+    public SpHelper(){
+        readInfo =MyApplication.getContext().getSharedPreferences(
+                "read_info", MODE_PRIVATE);
+        editor = readInfo.edit();
+    }
+
+    /*private SpHelper(){
         readInfo =MyApplication.getContext().getSharedPreferences(
                 "read_info", MODE_PRIVATE);
         editor = readInfo.edit();
@@ -29,7 +35,7 @@ public class SpHelper {
             }
         }
         return instance;
-    }
+    }*/
 
     public void setFontSize(int size){
         editor.putInt("font_size", size).apply();
@@ -41,10 +47,6 @@ public class SpHelper {
 
     public void setNightMode(Boolean isNight){
         editor.putBoolean("night_mode", isNight).apply();
-    }
-
-    public void setMark(int start){
-        editor.putInt("read_start", start).apply();
     }
 
     public int getFontSize(){
@@ -59,7 +61,4 @@ public class SpHelper {
         return readInfo.getBoolean("night_mode", false);
     }
 
-    public int getMark(){
-        return readInfo.getInt("read_start",0);
-    }
 }

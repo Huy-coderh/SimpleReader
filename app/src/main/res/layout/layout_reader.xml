@@ -16,4 +16,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/loading"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.example.simplereader.UI.MyLoadingView
+            android:id="@+id/loading_view"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            />
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/loading_view"
+            android:text="   Loading..."
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
 </FrameLayout>

@@ -41,7 +41,7 @@ public class HttpUtil {
      * @param requestBody 请求体
      * @return website内容(html文件)
      */
-    public static String getWebResponse(String url, String encoding, RequestBody requestBody) {
+    public static String getWebHtml(String url, String encoding, RequestBody requestBody) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -72,8 +72,8 @@ public class HttpUtil {
      * @param encoding website编码方式
      * @return website内容(html文件)
      */
-    public static String getWebResponse(String url, String encoding) {
-        return getWebResponse(url, encoding, null);
+    public static String getWebHtml(String url, String encoding) {
+        return getWebHtml(url, encoding, null);
     }
 
 }

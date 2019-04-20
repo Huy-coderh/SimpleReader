@@ -1,3 +1,4 @@
+/*
 package com.example.simplereader.siteparser;
 
 
@@ -56,10 +57,11 @@ public class Qidian {
                    mbook.setIntro(intro);
                    mbook.setType(type);
                    books.add(mbook);
-                   callBack.onSuccess(books);
+                   callBack.onSucceed(books);
                }
            }
        });
    }
 }
 
+*/

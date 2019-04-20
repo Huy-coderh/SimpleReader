@@ -22,41 +22,11 @@
         android:background="#e8e8e8"/>
 
     <TextView
-        android:id="@+id/info"
-        android:layout_margin="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="书籍详情"
-        android:layout_gravity="center"
-        android:textColor="#404040"
-        android:textSize="16sp"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#e8e8e8"/>
-
-    <TextView
         android:id="@+id/catalogues"
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="查看目录"
-        android:layout_gravity="center"
-        android:textColor="#404040"
-        android:textSize="16sp"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#e8e8e8"/>
-
-    <TextView
-        android:id="@+id/load"
-        android:layout_margin="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="缓存全本"
         android:layout_gravity="center"
         android:textColor="#404040"
         android:textSize="16sp"/>

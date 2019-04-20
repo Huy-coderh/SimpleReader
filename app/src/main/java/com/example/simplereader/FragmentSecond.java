@@ -16,13 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.simplereader.adapter.ResultRecyclerAdapter;
-import com.example.simplereader.sitebook.Book;
+import com.example.simplereader.sitebean.Book;
 
 import com.example.simplereader.siteparser.ZhuishuRecommend;
 import com.example.simplereader.util.StateCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FragmentSecond extends Fragment {
 
@@ -31,27 +32,24 @@ public class FragmentSecond extends Fragment {
     private List<Book> recommendList = new ArrayList<>();
     private ResultRecyclerAdapter adapter;
     private List<View> views = new ArrayList<>(3);
-    private StateCallBack callBack = new StateCallBack() {
-        @Override
-        public void onProcess() {
-
-        }
-
+    private StateCallBack callBack = new StateCallBack<List<Book>>() {
         @Override
         public void onSuccess(List<Book> bookList) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    loading.setVisibility(View.INVISIBLE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    recommendList = bookList;
-                    adapter.updataData(recommendList);
-                }
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                loading.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+                recommendList = bookList;
+                adapter.notifyDataSetChanged();
             });
         }
 
         @Override
-        public void onFailed() {
+        public void onSucceed() {
+
+        }
+
+        @Override
+        public void onFailed(String s) {
 
         }
     };
@@ -96,8 +94,7 @@ public class FragmentSecond extends Fragment {
             public void onClick(View v, int position) {
                 //跳转到BookActivity
                 Intent intent = new Intent(getActivity(), BookActivity.class);
-                intent.putExtra("book_url", recommendList.get(position).getUrl());
-                intent.putExtra("book_source", "追书神器");
+                intent.putExtra("book_data", recommendList.get(position));
                 startActivity(intent);
             }
         });

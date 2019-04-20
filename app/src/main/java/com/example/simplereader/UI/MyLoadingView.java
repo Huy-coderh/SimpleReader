@@ -33,10 +33,6 @@ public class MyLoadingView extends View {
 
     private ValueAnimator valueAnimator;
 
-    private float ovalWidth;
-
-    private float ovalHeight;
-
     public MyLoadingView(Context context) {
         super(context);
     }
@@ -61,8 +57,8 @@ public class MyLoadingView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         //默认值
-        int width = 80;
-        int height = 80;
+        int width = 60;
+        int height = 60;
 
         int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -94,10 +90,10 @@ public class MyLoadingView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        this.ovalWidth = w * 3/4;
-        this.ovalHeight = h * 3/4;
-        ovalRect = new RectF(w/2 - ovalWidth/2, h/2 - ovalHeight/2,
-                w/2 + ovalWidth/2, h/2 + ovalHeight/2);
+        float ovalWidth = w * 3 / 4;
+        float ovalHeight = h * 3 / 4;
+        ovalRect = new RectF(w/2 - ovalWidth /2, h/2 - ovalHeight /2,
+                w/2 + ovalWidth /2, h/2 + ovalHeight /2);
     }
 
     @Override

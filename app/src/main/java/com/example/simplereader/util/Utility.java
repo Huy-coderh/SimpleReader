@@ -20,7 +20,7 @@ public class Utility {
      * @param filePath 文件路径
      * @return 编码方式的String形式
      */
-    static String getCharset(String filePath) {
+    public static String getCharset(String filePath) {
         String charset = "GBK";
         byte[] first3Bytes = new byte[3];
         try {
@@ -85,7 +85,7 @@ public class Utility {
      * @param filepath 文件路径
      * @return 编码方式的String形式
      */
-    static String getEncode(String filepath){
+    public static String getEncode(String filepath){
         String str = null;
         File file = new File(filepath);
         BufferedInputStream is = null;
@@ -140,4 +140,29 @@ public class Utility {
     }
 
 
+    /**
+     *
+     * 获取搜索关键字和结果之间的匹配度
+     * @param search 关键字
+     * @param bookName 书名
+     * @param author 作者
+     * @return 匹配度
+     */
+    public static int getMatchValue(String search, String bookName, String author){
+        if(search.equals(bookName)) return 100;
+        if(search.equals(author)) return 99;
+        int m = LCS(search, bookName, 0, 0), n = LCS(search, author, 0, 0);
+        if(m > 0 || n>0){
+            return Math.max(80 - 2*(bookName.length()-m), 80 - 11*(author.length()-n));
+        }
+        return 0;
+    }
+
+    private static int LCS(String s1,String s2,int i,int j){
+        if(i>=s1.length()||j>=s2.length()) return 0;
+        if(s1.charAt(i)==s2.charAt(j)) return LCS(s1,s2,i+1,j+1)+1;
+        else
+            return Math.max(LCS(s1,s2,i+1,j), LCS(s1,s2,i,j+1));
+    }
 }
+

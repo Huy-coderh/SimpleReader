@@ -1,6 +1,6 @@
 package com.example.simplereader.siteparser;
 
-import com.example.simplereader.sitebook.Book;
+import com.example.simplereader.sitebean.Book;
 import com.example.simplereader.util.HttpUtil;
 import com.example.simplereader.util.StateCallBack;
 
@@ -21,7 +21,7 @@ public class ZhuishuRecommend {
     public static final int MONTH = 2;
     public static final int TOTAL = 3;
 
-    public static void getRecommend(int which, StateCallBack callBack){
+    public static void getRecommend(int which, StateCallBack<List<Book>> callBack){
         String root = "http://www.zhuishushenqi.com";
         String url = null;
         switch(which){

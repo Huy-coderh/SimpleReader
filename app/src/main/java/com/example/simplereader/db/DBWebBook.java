@@ -6,17 +6,19 @@ public class DBWebBook extends LitePalSupport {
 
     private int id;
 
-    private String name;
+    private String name;   //书名
 
-    private String url;
+    private String url;   //书籍地址
 
-    private String image;
+    private String image;   //图片地址
 
-    private String source;
+    private String source;   //书籍来源
 
-    private String readChapter;
+    private int chapter;   //当前阅读章节
 
-    private int readRecord;
+    private int record;   //记录当前章节的已阅读位置
+
+    private int total;   //总章节数
 
     public void setId(int id) {
         this.id = id;
@@ -30,12 +32,12 @@ public class DBWebBook extends LitePalSupport {
         this.url = url;
     }
 
-    public void setReadChapter(String readChapter) {
-        this.readChapter = readChapter;
+    public void setChapter(int chapter) {
+        this.chapter = chapter;
     }
 
-    public void setReadRecord(int readRecord) {
-        this.readRecord = readRecord;
+    public void setRecord(int record) {
+        this.record = record;
     }
 
     public int getId() {
@@ -50,12 +52,12 @@ public class DBWebBook extends LitePalSupport {
         return url;
     }
 
-    public String getReadChapter() {
-        return readChapter;
+    public int getChapter() {
+        return chapter;
     }
 
-    public int getReadRecord() {
-        return readRecord;
+    public int getRecord() {
+        return record;
     }
 
     public String getImage() {
@@ -72,5 +74,13 @@ public class DBWebBook extends LitePalSupport {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

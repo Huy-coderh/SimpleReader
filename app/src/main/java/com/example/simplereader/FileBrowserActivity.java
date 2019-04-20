@@ -12,7 +12,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,12 +22,13 @@ import com.example.simplereader.bookshelf.LocalBook;
 import com.example.simplereader.local.LocalTxt;
 import com.example.simplereader.local.LocalDirectory;
 import com.example.simplereader.local.LocalFile;
-import com.example.simplereader.util.BookshelfHelper;
+import com.example.simplereader.util.DBHelper;
 import com.example.simplereader.util.Utility;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FileBrowserActivity extends BaseActivity{
 
@@ -41,7 +41,7 @@ public class FileBrowserActivity extends BaseActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_filebrower);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         filePath = getIntent().getStringExtra("FilePath");
         openDirectory(filePath);
         initViews();
@@ -49,31 +49,28 @@ public class FileBrowserActivity extends BaseActivity{
 
     private void initViews(){
         adapter = new FileRecyclerAdapter(dataList);
-        adapter.setOnItemClickListener(new FileRecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-                if(dataList.get(position) instanceof LocalDirectory){
-                    filePath = dataList.get(position).getPath();
-                    openDirectory(filePath);
-                } else {
-                    LocalBook book = new LocalBook(dataList.get(position).getName(),
-                            dataList.get(position).getPath());
-                    //加入书架
-                    switch (BookshelfHelper.getInstance().addLocalBook(book)){
-                        case BookshelfHelper.ADD_FINISHED :
-                            Toast.makeText(FileBrowserActivity.this,
-                                    "已加入书架", Toast.LENGTH_SHORT).show();
-                            finish();
-                            break;
-                        case BookshelfHelper.ADD_FAILED :
-                            Toast.makeText(FileBrowserActivity.this,
-                                    "添加失败", Toast.LENGTH_SHORT).show();
-                            break;
-                        case BookshelfHelper.BOOK_EXIST :
-                            Toast.makeText(FileBrowserActivity.this,
-                                    "书籍已存在", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+        adapter.setOnItemClickListener((v, position) -> {
+            if(dataList.get(position) instanceof LocalDirectory){
+                filePath = dataList.get(position).getPath();
+                openDirectory(filePath);
+            } else {
+                LocalBook book = new LocalBook(dataList.get(position).getName(),
+                        dataList.get(position).getPath());
+                //加入书架
+                switch (DBHelper.getInstance().addLocalBook(book)){
+                    case DBHelper.FINISHED:
+                        Toast.makeText(FileBrowserActivity.this,
+                                "已加入书架", Toast.LENGTH_SHORT).show();
+                        finish();
+                        break;
+                    case DBHelper.FAILED:
+                        Toast.makeText(FileBrowserActivity.this,
+                                "添加失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case DBHelper.EXIST:
+                        Toast.makeText(FileBrowserActivity.this,
+                                "书籍已存在", Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
         });
@@ -89,25 +86,15 @@ public class FileBrowserActivity extends BaseActivity{
          */
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL);
-        itemDecoration.setDrawable(ContextCompat.getDrawable(this, R.drawable.recycler_view_divider));
+        itemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.recycler_view_divider)));
         recyclerView.addItemDecoration(itemDecoration);
         /**
          * 初始化控件
          */
         pathInfoLayout = findViewById(R.id.file_path_layout);
-        pathInfoLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backToParentDirectory();
-            }
-        });
+        pathInfoLayout.setOnClickListener(v -> backToParentDirectory());
         ImageView imageView = findViewById(R.id.back_image);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backToParentDirectory();
-            }
-        });
+        imageView.setOnClickListener(v -> backToParentDirectory());
     }
 
     private void backToParentDirectory(){
@@ -145,7 +132,7 @@ public class FileBrowserActivity extends BaseActivity{
                 dataList.add(new LocalDirectory(file.getName(), info, file.getPath()));
             }
         }if(adapter != null){
-            adapter.updateData(dataList);
+            adapter.notifyDataSetChanged();
             updateFilePathInfo();
         }
     }

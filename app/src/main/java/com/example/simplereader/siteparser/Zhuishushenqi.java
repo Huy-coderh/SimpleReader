@@ -1,31 +1,6 @@
 package com.example.simplereader.siteparser;
 
-import android.app.DownloadManager;
-import android.util.Log;
-
-import com.example.simplereader.local.LocalDirectory;
-import com.example.simplereader.sitebook.Book;
-import com.example.simplereader.sitebook.Chapter;
-import com.example.simplereader.util.HttpUtil;
-import com.example.simplereader.util.StateCallBack;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-public class Zhuishushenqi extends WebSite{
+/*public class Zhuishushenqi extends WebSite{
 
     private String root = "http//www.zhuishushenqi.com";
 
@@ -59,7 +34,7 @@ public class Zhuishushenqi extends WebSite{
                     String type = e.select("div > p.author > span").get(2).text();
                     String intro = e.select("div > p.desc").text();
                     books.add(new Book(name, url, author, image, intro, type, getSiteName()));
-                    callBack.onSuccess(books);
+                    callBack.onSucceed(books);
                 }
             }
         });
@@ -67,7 +42,7 @@ public class Zhuishushenqi extends WebSite{
     }
 
     @Override
-    public List<Chapter> getCatalog(String url) {
+    public List<Chapter> loadCatalog(String url) {
         return null;
     }
 
@@ -85,4 +60,4 @@ public class Zhuishushenqi extends WebSite{
     public String getEncoding() {
         return "UTF-8";
     }
-}
+}*/

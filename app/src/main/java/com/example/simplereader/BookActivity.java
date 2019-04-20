@@ -7,25 +7,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.simplereader.util.HttpUtil;
+import com.example.simplereader.bookshelf.WebBook;
+import com.example.simplereader.sitebean.Book;
+import com.example.simplereader.sitebean.BookMsg;
+import com.example.simplereader.sitebean.Chapter;
+import com.example.simplereader.sitebean.UpdateMsg;
+import com.example.simplereader.util.BookParser;
+import com.example.simplereader.util.DBHelper;
+import com.example.simplereader.util.StateCallBack;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+public class BookActivity extends BaseActivity implements View.OnClickListener{
 
-public class BookActivity extends BaseActivity {
+    public static final int MODE_ALL = 1;
+    public static final int MODE_UPDATE = 2;
 
     private View bookLayout;
     private View loading;
@@ -40,25 +40,36 @@ public class BookActivity extends BaseActivity {
     private LinearLayout chapters;
     //private List<String> chapterUrls = new ArrayList<>();
 
-    private ImageView add;
+    private View add;
     private View read;
     private View download;
 
-    private String sitesName;
-    private String encoding;
+    private Book book;
+    private WebBook webBook;
+    private int mode;
+
+    private StateCallBack<UpdateMsg> callBack = new StateCallBack<UpdateMsg>() {
+        @Override
+        public void onSuccess(UpdateMsg updateMsg) {
+            runOnUiThread(() -> initView(updateMsg));
+        }
+
+        @Override
+        public void onSucceed() {
+
+        }
+
+        @Override
+        public void onFailed(String s) {
+
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        String url = getIntent().getStringExtra("book_url");
-        sitesName = getIntent().getStringExtra("book_source");
-        if(sitesName.equals("追书神器")){
-            encoding = "UTF-8";
-        } else {
-            encoding = "GBK";
-        }
 
         bookLayout = findViewById(R.id.book_info_layout);
         loading = findViewById(R.id.loading);
@@ -70,61 +81,84 @@ public class BookActivity extends BaseActivity {
         updateText = findViewById(R.id.update);
         introText = findViewById(R.id.intro);
         chapters = findViewById(R.id.latest_chapters);
-
         bookLayout.setVisibility(View.INVISIBLE);
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String html = new String(response.body().bytes(), encoding);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initView(html);
-                    }
-                });
-            }
-        });
+        if(getIntent().getIntExtra("mode", MODE_ALL) == MODE_ALL){
+            mode = MODE_ALL;
+            webBook = getIntent().getParcelableExtra("book_data");
+            BookParser.getInstance().getBookInfo(webBook.getUrl(), webBook.getSource(), callBack);
+        } else {
+            mode = MODE_UPDATE;
+            book = getIntent().getParcelableExtra("book_data");
+            BookParser.getInstance().getUpdate(book.getUrl(), book.getSource(), callBack);
+        }
+
     }
 
-    private void initView(String html){
+    private void initView(UpdateMsg updateMsg){
         bookLayout.setVisibility(View.VISIBLE);
         loading.setVisibility(View.INVISIBLE);
 
-        Document doc = Jsoup.parse(html);
-        Element e = doc.select("body > div.page-detail-container.clearfix > div.detail-left").first();
-        String img = e.getElementsByClass("book-info").first()
-                .getElementsByTag("img").first().attr("src");
-        String name = e.select("div.book-info > div > h1").text();
-        String type = e.select("div.book-info > div > p:nth-child(3)").text().split("\\|")[1];
-        String author = e.select("div.book-info > div > p:nth-child(3) > a").text();
-        String source = sitesName;
-        String update = e.select("div.book-info > div > p:nth-child(4)").text();
-        String intro = e.select("div:nth-child(3) > p").text();
-        List<Element> latestChapters = e.select("div:nth-child(4) > ul > li");
-        Glide.with(BookActivity.this).load(img).into(image);
-        nameText.setText(name);
-        typeText.setText(type);
-        authorText.setText(author);
-        sourceText.setText(source);
-        updateText.setText(update);
-        introText.setText(intro);
-        for(int i=0; i<chapters.getChildCount(); i++){
-            TextView textView = (TextView) chapters.getChildAt(i);
-            textView.setText(latestChapters.get(i).text());
-            int finalI = i;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(BookActivity.this, ReaderActivity.class);
-                    intent.putExtra("book_url", latestChapters.get(finalI).attr("href"));
-                    startActivity(intent);
+        if(mode == MODE_ALL){
+            book = ((BookMsg)updateMsg).getBook();
+            if(book.getImage() == null || book.getImage() .equals(""))
+                book.setImage(webBook.getImage());
+        }
+
+        List<Chapter> chapterList = updateMsg.getChapterList();
+
+        Glide.with(BookActivity.this).load(book.getImage()).into(image);
+        nameText.setText(book.getName());
+        if(book.getType() != null && !book.getType().equals("")) typeText.setText(book.getType());
+        authorText.setText(book.getAuthor());
+        sourceText.setText(book.getSource());
+        updateText.setText(book.getTime());
+        introText.setText(book.getIntro());
+
+        for(int i=chapterList.size()-1,j=0; i>=0; i--,j++){
+            if(j < chapters.getChildCount()){
+                TextView textView = (TextView) chapters.getChildAt(j);
+                textView.setText(chapterList.get(i).getTitle());
+                int finalI = i;
+                textView.setOnClickListener(v -> {
+                /*Intent intent = new Intent(BookActivity.this, ReaderActivity.class);
+                intent.putExtra("book_url", latestChapters.get(finalI).attr("href"));
+                startActivity(intent);*/
+                });
+            }
+        }
+        read = findViewById(R.id.read);
+        read.setOnClickListener(this);
+        add = findViewById(R.id.add);
+        add.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.read:
+                Intent intent = new Intent(this, ReaderActivity.class);
+                intent.putExtra("book_ori", DBHelper.NET);
+                intent.putExtra("book_str", book.getUrl());
+                startActivity(intent);
+                break;
+            case R.id.add:
+                WebBook webBook = new WebBook(book.getName(), book.getUrl(), book.getImage(), book.getSource());
+                switch (DBHelper.getInstance().addWebBook(webBook)){
+                    case DBHelper.FINISHED:
+                        Toast.makeText(BookActivity.this,
+                                "已加入书架", Toast.LENGTH_SHORT).show();
+                        break;
+                    case DBHelper.FAILED:
+                        Toast.makeText(BookActivity.this,
+                                "添加失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case DBHelper.EXIST:
+                        Toast.makeText(BookActivity.this,
+                                "书籍已存在", Toast.LENGTH_SHORT).show();
+                        break;
                 }
-            });
+                break;
         }
     }
 }

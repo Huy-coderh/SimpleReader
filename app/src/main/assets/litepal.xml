@@ -6,6 +6,7 @@
     <list>
         <mapping class="com.example.simplereader.db.DBLocalBook"/>
         <mapping class="com.example.simplereader.db.DBWebBook"/>
+        <mapping class="com.example.simplereader.db.ChapterCache"/>
     </list>
 
 </litepal>

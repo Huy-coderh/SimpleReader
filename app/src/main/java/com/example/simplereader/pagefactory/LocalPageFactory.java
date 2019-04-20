@@ -1,16 +1,14 @@
-package com.example.simplereader.util;
+package com.example.simplereader.pagefactory;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.Toast;
+import android.os.BatteryManager;
 
 import com.example.simplereader.MyApplication;
 import com.example.simplereader.UI.MyReaderView;
+import com.example.simplereader.util.DBHelper;
 import com.google.common.primitives.Bytes;
 
 import java.io.File;
@@ -19,29 +17,17 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class PageFactory {
+public class LocalPageFactory extends PageFactory {
 
-
-    private int pageWidth;
-    private int pageHeight;
-    private int margin = 50;  //页面距离屏幕边缘px
-    private int lineSpace = 20;   //每行间距
-    private int paragraphSpace = 60;   //段落之间间距
-    private int fontSize = 50;   //子号大小
-    private int fontHeight;   //字体实际高度(包括边距)
-    private boolean nightMode;
-    private int infoSize = 50;   //下方电池时间进度等信息的尺寸
-    private int freeSize;   //当前页面剩余空间
-
-    private MyReaderView pageView;
-
-    private SpHelper spHelper;
-
-    private RandomAccessFile rafile = null;
+    private RandomAccessFile raFile = null;
     private MappedByteBuffer mappedBuffer = null;
 
     private String encode;
@@ -49,62 +35,45 @@ public class PageFactory {
     private int end = 0;
     private int fileLength;
 
-    private Canvas canvas;
-    private Paint paint;
-    private Bitmap bitmap;
-
+    private String bookName;
+    private String filePath;
     private List<String> content = new ArrayList<>();
 
-    public PageFactory(MyReaderView view){
-        this.pageView = view;
-        spHelper = SpHelper.getInstance();
-        //获取屏幕宽高
-        DisplayMetrics metrics = MyApplication.getContext().getResources().getDisplayMetrics();
-        int screenWidth = metrics.widthPixels;
-        int screenHeight = metrics.heightPixels;
-        if(spHelper.getFontSize() != 0){
-            fontSize = spHelper.getFontSize();
-        }
-        if(spHelper.getParagraphSpace() != 0){
-            paragraphSpace = spHelper.getParagraphSpace();
-        }
-        nightMode = spHelper.getNightMode();
-        bitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
-        pageView.setBitmap(bitmap);
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setTextSize(fontSize);
-        fontHeight = getFontHeight();
-        canvas = new Canvas(bitmap);
-        pageWidth = screenWidth - 2*margin;
-        pageHeight = screenHeight - 2*margin;
-        freeSize = pageHeight;
+    public LocalPageFactory(MyReaderView view){
+        super(view);
     }
 
-    public void openBook(final String bookPath){
-        encode = Utility.getCharset(bookPath);
-        Log.d("encode", encode);
-        begin = spHelper.getMark();
+    @Override
+    public void openBook(String bookPath, String encoding){
+        this.filePath = bookPath;
+        encode = encoding;
+        begin = DBHelper.getInstance().getLocalRecord(filePath);
         end = begin;
         File file = new File(bookPath);
+        bookName = file.getName();
         fileLength = (int) file.length();
         try {
-            rafile = new RandomAccessFile(file, "r");
-            mappedBuffer = rafile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            raFile = new RandomAccessFile(file, "r");
+            mappedBuffer = raFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(MyApplication.getContext(), "打开失败", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MyApplication.getContext(), "打开失败", Toast.LENGTH_SHORT).show();
         }
+        getNextPage();
     }
 
+    @Override
     public void getNextPage(){
-        if(end > fileLength){
+        if(end >= fileLength){
             return;
         }
         begin = end;
         pageDown();
         printPage(true);
+        setRecord();
     }
 
+    @Override
     public void getPrePage(){
         if(begin <= 0){
             return;
@@ -112,24 +81,19 @@ public class PageFactory {
         end = begin;
         pageUp();
         printPage(false);
+        setRecord();
     }
 
     private void pageUp(){
         content.clear();
         List<String> tempList = new ArrayList<>();
-        String paragraph = "";
-        while(begin>0 && freeSize>fontHeight){
+        String paragraph;
+        while(begin>0 && freeSize>=fontHeight){
             try{
                 paragraph = new String(getPreParagraph(), encode);
-                if(paragraph.equals("")){
-                    continue;
-                }
                 paragraph = paragraph.replaceAll("\r\n","  ");
                 paragraph = paragraph.replaceAll("\n", "  ");
-                if(paragraph.equals("\r")){
-                    /*if(freeSize > paragraphSpace){
-                        content.add("\r");
-                    }*/
+                if(paragraph.equals("") || paragraph.equals("\r")){
                     continue;
                 }
                 tempList.clear();
@@ -139,6 +103,7 @@ public class PageFactory {
                     //freeSize = freeSize - fontHeight;
                     paragraph = paragraph.substring(size);
                 }
+                //逆序存进content集合
                 if(freeSize >= tempList.size()*fontHeight){
                     for(int i=tempList.size(); i>0; i--){
                         content.add(tempList.get(i-1));
@@ -232,42 +197,50 @@ public class PageFactory {
         return Bytes.toArray(bytes);
     }
 
-    private void printPage(boolean isforward){
+    private void printPage(boolean isForward){
         //清除画布
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
+        canvas.drawText(bookName, marginH, marginTop/2, infoPaint);
+
         if(content.size() > 0){
-            if(!isforward){
+            if(!isForward){
                 Collections.reverse(content);
             }
-            int y = margin;
+            int y = marginTop;
             for(String line : content){
                 if( ! line.equals("\r")){
                     y += fontHeight;
-                    canvas.drawText(line, margin, y, paint);
-                } else if(y > margin){
+                    canvas.drawText(line, marginH, y, paint);
+                } else if(y > marginTop){
                     y += paragraphSpace;
                 }
             }
         }
-        pageView.setBitmap(bitmap);
-        pageView.invalidate();
+
+        drawBattery();
+        drawTime();
+        drawProgress( begin/ fileLength);
+
+        readerView.setBitmap(bitmap);
+        readerView.invalidate();
 
     }
 
-    public void destory(){
-        if(rafile != null){
+    private void setRecord(){
+        DBHelper.getInstance().addLocalRecord(filePath, begin);
+    }
+
+    @Override
+    public void destroy(){
+        if(raFile != null){
             try {
-                rafile.close();
+                raFile.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private int getFontHeight(){
-        Paint.FontMetrics fm = paint.getFontMetrics();
-        return (int) Math.ceil(fm.descent - fm.top) + 2;
-    }
 
 }

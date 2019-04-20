@@ -1,7 +1,5 @@
 package com.example.simplereader.adapter;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,9 +11,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.simplereader.MyApplication;
 import com.example.simplereader.R;
-import com.example.simplereader.sitebook.Book;
+import com.example.simplereader.sitebean.Book;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ResultRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
@@ -42,7 +39,7 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    private List<Book> bookList = new ArrayList<>();
+    private List<Book> bookList;
     private OnItemClickListener listener = null;
 
     public ResultRecyclerAdapter(List<Book> bookList){
@@ -53,10 +50,6 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.listener = listener;
     }
 
-    public void updataData(List<Book> bookList){
-        this.bookList = bookList;
-        this.notifyDataSetChanged();
-    }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {

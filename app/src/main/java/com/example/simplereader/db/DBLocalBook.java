@@ -10,7 +10,7 @@ public class DBLocalBook extends LitePalSupport {
 
     private String path;
 
-    private int readRecord;
+    private int record;
 
     public void setId(int id) {
         this.id = id;
@@ -24,8 +24,8 @@ public class DBLocalBook extends LitePalSupport {
         this.name = name;
     }
 
-    public void setReadRecord(int readRecord) {
-        this.readRecord = readRecord;
+    public void setRecord(int record) {
+        this.record = record;
     }
 
     public int getId() {
@@ -40,7 +40,7 @@ public class DBLocalBook extends LitePalSupport {
         return path;
     }
 
-    public int getReadRecord() {
-        return readRecord;
+    public int getRecord() {
+        return record;
     }
 }

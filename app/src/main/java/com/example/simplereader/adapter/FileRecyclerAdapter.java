@@ -60,11 +60,6 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.mOnItemClickListener = listener;
     }
 
-    public void updateData(List<LocalFile> list){
-        this.dataList = list;
-        this.notifyDataSetChanged();
-    }
-
     @Override
     public void onClick(View v) {
         if(mOnItemClickListener != null){

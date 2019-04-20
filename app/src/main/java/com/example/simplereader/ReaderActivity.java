@@ -1,10 +1,10 @@
 package com.example.simplereader;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,18 +13,27 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.simplereader.UI.MyReaderView;
-import com.example.simplereader.util.PageFactory;
+import com.example.simplereader.bookshelf.BaseBook;
+import com.example.simplereader.bookshelf.WebBook;
+import com.example.simplereader.pagefactory.LocalPageFactory;
+import com.example.simplereader.pagefactory.NetPageFactory;
+import com.example.simplereader.pagefactory.PageFactory;
+import com.example.simplereader.util.DBHelper;
+import com.example.simplereader.util.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReaderActivity extends BaseActivity {
+public class ReaderActivity extends BaseActivity implements View.OnClickListener{
 
-    private PageFactory pageFactory;
+    private PageFactory pageFactory = null;
     private List<PopupWindow> windows = new ArrayList<>();
+    private WebBook book = null;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,56 +42,66 @@ public class ReaderActivity extends BaseActivity {
          */
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.layout_reader);
-        String bookPath = getIntent().getStringExtra("url_path");
-        Log.d("book_path", bookPath);
-        MyReaderView myReaderView = findViewById(R.id.reader_view);
+
+        int origin = getIntent().getIntExtra("book_ori", DBHelper.LOCAL);
+        String str = getIntent().getStringExtra("book_str");
+        MyReaderView readerView = findViewById(R.id.reader_view);
         //获取屏幕宽高(不包括虚拟按键)
         WindowManager manager = getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
         manager.getDefaultDisplay().getMetrics(outMetrics);
         final int screenWidth = outMetrics.widthPixels;
 
-        myReaderView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getRawX();
-                float y = event.getY();
-                /*Log.d("x", x + " ");
-                Log.d("y", y + " ");*/
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if(x >= screenWidth*2/3){
-                            pageFactory.getNextPage();
-                        } else if(x <= screenWidth*1/3){
-                            pageFactory.getPrePage();
-                        } else {
-                            showPopupWindow(v);
-                        }
-                }
-                return true;
+        /*触摸翻页事件*/
+        readerView.setOnTouchListener((v, event) -> {
+            float x = event.getRawX();
+            float y = event.getY();
+            /*Log.d("x", x + " ");
+            Log.d("y", y + " ");*/
+            switch(event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if(x >= screenWidth*2/3){
+                        pageFactory.getNextPage();
+                    } else if(x <= screenWidth /3){
+                        pageFactory.getPrePage();
+                    } else {
+                        showPopupWindow(v);
+                    }
             }
+            return true;
         });
-        pageFactory = new PageFactory(myReaderView);
-        pageFactory.openBook(bookPath);
-        pageFactory.getNextPage();
+
+        if(origin == DBHelper.NET){
+            book = DBHelper.getInstance().getWebBook(str);
+            if(book != null && book.getSource() != null){
+                pageFactory = new NetPageFactory(readerView);
+                pageFactory.setLoadingView(findViewById(R.id.loading));
+                pageFactory.openBook(str, book.getSource());
+            } else {
+                Toast.makeText(this, "书籍打开失败", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            pageFactory = new LocalPageFactory(readerView);
+            pageFactory.openBook(str, Utility.getCharset(str));
+        }
     }
 
     private void showPopupWindow(View view){
         View popup_top = LayoutInflater.from(this).inflate(R.layout.popup_top, null);
         View popup_bottom = LayoutInflater.from(this).inflate(R.layout.popup_bottom, null);
-        ImageView popup_img = popup_top.findViewById(R.id.popup_img);
-        TextView popup_text = popup_top.findViewById(R.id.popup_text);
-        popup_img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        //popup_text.setText();
+
+        ImageView popup_img = popup_top.findViewById(R.id.popup_img);     //顶部返回按钮
+        TextView popup_text = popup_top.findViewById(R.id.popup_text);      //顶部书名Text
+        popup_img.setOnClickListener(this);
+        popup_text.setText(book.getName());
+
+        View catalog = popup_bottom.findViewById(R.id.catalogues);
+        catalog.setOnClickListener(this);
 
         PopupWindow popupWindow1 = new PopupWindow(popup_top, WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
@@ -94,12 +113,9 @@ public class ReaderActivity extends BaseActivity {
         popupWindow1.setBackgroundDrawable(new ColorDrawable(0x00ffffff));
         popupWindow1.showAtLocation(view, Gravity.START|Gravity.TOP, 0, 0);
         popupWindow2.showAtLocation(view, Gravity.START|Gravity.BOTTOM, 0, 0);
-        popupWindow1.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                for(PopupWindow window : windows){
-                    window.dismiss();
-                }
+        popupWindow1.setOnDismissListener(() -> {
+            for(PopupWindow window : windows){
+                window.dismiss();
             }
         });
     }
@@ -107,6 +123,19 @@ public class ReaderActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        pageFactory.destory();
+        if(pageFactory != null){
+            pageFactory.destroy();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.popup_img :
+                finish();
+                break;
+            case R.id.catalogues :
+
+        }
     }
 }

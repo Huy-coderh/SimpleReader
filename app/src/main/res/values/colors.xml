@@ -24,4 +24,8 @@
     <color name="default_oval_color">#353535</color>
     <color name="default_arc_color">#ffffff</color>
 
+    <color name="reader_loading_color">#000000</color>
+
+    <color name="reader_info_color1">#5e5e5e</color>
+
 </resources>
