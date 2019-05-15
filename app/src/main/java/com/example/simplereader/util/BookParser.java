@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * 单例模式
+ */
 public class BookParser {
 
     private int MAX_REQUEST = 3;    //请求失败的最大网络请求数
@@ -48,6 +51,12 @@ public class BookParser {
         return instance;
     }
 
+    /**
+     * 加载目录
+     * @param url  地址
+     * @param source   来源网站
+     * @param callBack    回调接口
+     */
     public void loadCatalog(String url, String source, StateCallBack callBack){
         WebSite site = map.get(source);
         this.source = source;
@@ -80,10 +89,19 @@ public class BookParser {
         }
     }
 
+    /**
+     * 返回目录
+     * @return  目录
+     */
     public List<Chapter> getCatalog(){
         return catalog;
     }
 
+    /**
+     * 返回章节内容
+     * @param index   章节在目录中的索引号
+     * @param callBack    回调接口
+     */
     public void getContent(int index, StateCallBack<String> callBack){
         WebSite site = map.get(source);
         if(site != null){
@@ -91,18 +109,35 @@ public class BookParser {
         }
     }
 
+    /**
+     * 返回书本信息
+     * @param url   地址
+     * @param source   来源网站
+     * @param callBack    回调接口
+     */
     public void getBookInfo(String url, String source, StateCallBack<UpdateMsg> callBack){
         WebSite site = map.get(source);
         if(site != null)
             new Thread(() -> site.getBookInfo(url, callBack)).start();
     }
 
+    /**
+     * 返回书本更新信息
+     * @param url   地址
+     * @param source    来源网站
+     * @param callBack    回调接口
+     */
     public void getUpdate(String url, String source, StateCallBack<UpdateMsg> callBack){
         WebSite site = map.get(source);
         if(site != null)
         new Thread(() -> site.getUpdateInfo(url, callBack)).start();
     }
 
+    /**
+     * 根据书名或者作者名搜索
+     * @param name   关键字
+     * @param callBack    回调接口
+     */
     public void search(String name, StateCallBack<Book> callBack){
         Collection<WebSite> sites = map.values();
         threads = Executors.newFixedThreadPool(sites.size());
@@ -111,6 +146,9 @@ public class BookParser {
         }
     }
 
+    /**
+     * 停止搜索，防止内存泄露
+     */
     public void destroySearch(){
         if(threads != null){
             threads.shutdownNow();

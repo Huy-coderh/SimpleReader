@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * 本地书本阅读翻页，跳转管理类
+ */
 public class LocalPageFactory extends PageFactory {
 
     private RandomAccessFile raFile = null;

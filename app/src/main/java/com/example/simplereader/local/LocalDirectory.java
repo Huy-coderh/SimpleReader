@@ -2,6 +2,9 @@ package com.example.simplereader.local;
 
 import com.example.simplereader.R;
 
+/**
+ * 本地文件夹属性类
+ */
 public class LocalDirectory extends LocalFile {
 
     private int imageId;

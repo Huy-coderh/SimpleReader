@@ -105,6 +105,7 @@ public class Luoqiu extends WebSite {
             html = html.replaceAll("<br />", "\\$");
             Document doc = Jsoup.parse(html);
             String content = doc.select("#BookText").first().text();
+            content = content.replaceAll("</p>", "");
             callBack.onSuccess(content);
         } else {
             callBack.onFailed("获取章节内容失败");

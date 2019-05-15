@@ -2,6 +2,9 @@ package com.example.simplereader.db;
 
 import org.litepal.crud.LitePalSupport;
 
+/**
+ * 数据库本地书籍类
+ */
 public class DBLocalBook extends LitePalSupport {
 
     private int id;

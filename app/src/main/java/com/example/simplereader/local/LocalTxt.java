@@ -2,6 +2,9 @@ package com.example.simplereader.local;
 
 import com.example.simplereader.R;
 
+/**
+ * 本地txt文件类
+ */
 public class LocalTxt extends LocalFile{
 
     private int imageId;

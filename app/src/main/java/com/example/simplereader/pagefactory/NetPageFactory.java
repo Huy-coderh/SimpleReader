@@ -30,6 +30,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * 网络书籍阅读翻页，跳转管理类
+ */
 public class NetPageFactory extends PageFactory {
 
     private static final int LOAD_FAILED = 1;
@@ -60,10 +63,13 @@ public class NetPageFactory extends PageFactory {
         super(readerView);
     }
 
-    //获取章节内容的回调
+    /**
+     * 获取章节内容的回调
+     */
     private StateCallBack<String> callBack = new StateCallBack<String>() {
         @Override
         public void onSuccess(String s) {
+
             if(isForward && nextChapter.length() == 0){
                 nextChapter = s;
                 endLoading(false);
@@ -89,6 +95,11 @@ public class NetPageFactory extends PageFactory {
 
     };
 
+    /**
+     * 打开书籍
+     * @param url   地址
+     * @param sourceSite   来源网站
+     */
     @Override
     public void openBook(String url, String sourceSite) {
         loading();
@@ -182,6 +193,9 @@ public class NetPageFactory extends PageFactory {
         }
     }
 
+    /**
+     * 获取上一章节
+     */
     @Override
     public void getPrePage() {
         isForward = false;
@@ -195,6 +209,9 @@ public class NetPageFactory extends PageFactory {
         }
     }
 
+    /**
+     * 获取下一章节
+     */
     @Override
     public void getNextPage() {
         isForward = true;
@@ -208,6 +225,9 @@ public class NetPageFactory extends PageFactory {
         }
     }
 
+    /**
+     * 跳转上一页
+     */
     private void pageUp(){
         content.clear();
         List<String> tempList = new ArrayList<>();
@@ -217,14 +237,9 @@ public class NetPageFactory extends PageFactory {
             if(paragraph.length() == 0){
                 continue;
             }
+
             //过滤掉为一串空格的段落
-            int i;
-            for(i=0; i<paragraph.length(); i++){
-                if(paragraph.charAt(i) != ' '){
-                    break;
-                }
-            }
-            if(i == paragraph.length())
+            if(paragraph.replaceAll("\\s", "").length() == 0)
                 continue;
 
             tempList.clear();
@@ -260,6 +275,10 @@ public class NetPageFactory extends PageFactory {
         freeSize = pageHeight;
     }
 
+    /**
+     * 获取上一段落
+     * @return  上一段洛String
+     */
     private String getPreParagraph(){
         StringBuilder str = new StringBuilder();
         char temp;
@@ -273,6 +292,9 @@ public class NetPageFactory extends PageFactory {
         return str.reverse().toString();
     }
 
+    /**
+     * 跳转带下一页
+     */
     private void pageDown(){
         content.clear();
         String paragraph = "";
@@ -281,14 +303,10 @@ public class NetPageFactory extends PageFactory {
             if(paragraph.length()==0) continue;
 
             //过滤掉为一串空格的段落
-            int i;
-            for(i=0; i<paragraph.length(); i++){
-                if(paragraph.charAt(i) != ' '){
-                    break;
-                }
-            }
-            if(i == paragraph.length())
+            if(paragraph.replaceAll("\\s", "").length() == 0){
+                paragraph = "";   //置空，防止下面的指针回退
                 continue;
+            }
 
             while(paragraph.length()>0 && freeSize>=fontHeight){
                 int size = paint.breakText(paragraph, true, pageWidth, null);
@@ -306,6 +324,10 @@ public class NetPageFactory extends PageFactory {
         freeSize = pageHeight;
     }
 
+    /**
+     * 获取下一段落
+     * @return  下一段洛
+     */
     private String getNextParagraph(){
         StringBuilder str = new StringBuilder();
         char temp;
@@ -319,6 +341,11 @@ public class NetPageFactory extends PageFactory {
         return str.toString();
     }
 
+    /**
+     * 刷新页面
+     * @param isForward  当前跳转方向，向前还是向后
+     * @param showMsg  当前是否需要显示错误信息的状态
+     */
     private void printPage(boolean isForward, boolean showMsg){
         //清除画布
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -360,7 +387,10 @@ public class NetPageFactory extends PageFactory {
         }
 
     }
-    
+
+    /**
+     * 进入等待状态的操作
+     */
     private void loading(){
         handler.post(() -> {
             if(loadingView != null){
@@ -370,6 +400,10 @@ public class NetPageFactory extends PageFactory {
         });
     }
 
+    /**
+     * 结束等待状态
+     * @param showMsg  是否需要显示错误信息
+     */
     private synchronized void endLoading(boolean showMsg){
         if(!showMsg && isWaiting){
             if(isForward){
@@ -387,6 +421,9 @@ public class NetPageFactory extends PageFactory {
         });
     }
 
+    /**
+     * 章节跳转
+     */
     private void skipChapter(){
         if(isForward){
             //如果下一章节内容不为空
@@ -449,6 +486,11 @@ public class NetPageFactory extends PageFactory {
         }
     }
 
+    /**
+     * 从网页获取完整的章节内容（上一章，当前章，下一章）
+     * @param position   具体章节
+     * @param which    上一章，当前章，下一章的标签
+     */
     private void getChapters(int position,int which){
         StateCallBack<String> callBack = new StateCallBack<String>() {
             @Override
@@ -484,16 +526,28 @@ public class NetPageFactory extends PageFactory {
         }
     }
 
+    /**
+     * 显示错误信息
+     * @param s  需要显示的信息
+     */
     private void showMsg(String s){
         content.clear();
         content.add(s);
         printPage(true, true);
     }
 
+    /**
+     * 设置阅读记录到数据库
+     * @param chapterIndex   阅读章节记录
+     * @param record   阅读章节内部阅读点
+     */
     private void setRecord(int chapterIndex, int record){
         DBHelper.getInstance().addWebRecord(url, chapterIndex, record);
     }
 
+    /**
+     * 将当前的三个章节缓存到数据库
+     */
     private void setCache() {
         String title1 = "", title2 = "", title3 = "";
         if(loadState == LOAD_SUCCESS){
@@ -512,6 +566,9 @@ public class NetPageFactory extends PageFactory {
         DBHelper.getInstance().addCache(url, chapter, title1, lastChapter, title2, currentChapter, title3, nextChapter);
     }
 
+    /**
+     * 设置当前的总章节数到数据库
+     */
     private void setTotalNumber(){
         DBHelper.getInstance().addChapterNumber(url, total);
     }

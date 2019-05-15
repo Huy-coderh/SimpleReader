@@ -2,6 +2,9 @@ package com.example.simplereader.db;
 
 import org.litepal.crud.LitePalSupport;
 
+/**
+ * 数据库章节缓存类
+ */
 public class ChapterCache extends LitePalSupport {
 
     private int id;

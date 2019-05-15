@@ -1,6 +1,8 @@
 package com.example.simplereader.local;
 
-
+/**
+ * 本地文件属性类
+ */
 public class LocalFile {
 
     private String name;
