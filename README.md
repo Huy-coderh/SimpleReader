@@ -5,9 +5,9 @@
 
 1.先上效果图
 ------------
-<img src="https://github.com/97999/SimpleReader/images/screenshot1.jpg" width="300"/>
+<img src="https://github.com/97999/SimpleReader/blob/master/images/screenshot1.jpg" width="300"/>
 
-<img src="https://github.com/97999/SimpleReader/images/screenshot2.jpg" width="300"/>
+<img src="https://github.com/97999/SimpleReader/blob/master/images/screenshot1.jpg" width="300"/>
 
 <img src="https://github.com/97999/SimpleReader/images/screenshot3.jpg" width="300"/>
 
