@@ -35,7 +35,7 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             type = itemView.findViewById(R.id.recommend_type);
             author = itemView.findViewById(R.id.recommend_author);
             source = itemView.findViewById(R.id.source_text);
-            tagText = itemView.findViewById(R.id.tag_text);
+            tagText = itemView.findViewById(R.id.tag_text);    //  竖条，分隔类型和作者，如没有类型信息，则设置View.GONE
         }
     }
 

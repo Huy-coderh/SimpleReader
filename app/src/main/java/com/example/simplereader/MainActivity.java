@@ -49,6 +49,7 @@ public class MainActivity extends BaseActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         ViewPagerAdapter adapter = new ViewPagerAdapter(fragmentManager, fragmentList);
         viewPager.setAdapter(adapter);
+
         MyBottomViewGroup viewGroup = findViewById(R.id.view_group);
         viewGroup.setViewPager(viewPager);
 
@@ -83,6 +84,10 @@ public class MainActivity extends BaseActivity {
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
     }
 
+    /**
+     * 当Activity彻底运行起来之后回调onPostCreate方法
+     * @param savedInstanceState
+     */
     @Override
     protected void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);

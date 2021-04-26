@@ -19,6 +19,12 @@ public class HttpUtil {
         sendOkHttpRequest(address, null, callback);
     }
 
+    /**
+     * 发送网络请求
+     * @param url
+     * @param requestBody
+     * @param callback
+     */
     public static void sendOkHttpRequest(String url, RequestBody requestBody, Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request.Builder builder = new Request.Builder();

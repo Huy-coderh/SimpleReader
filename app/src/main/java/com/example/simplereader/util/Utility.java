@@ -158,7 +158,15 @@ public class Utility {
         return 0;
     }
 
-    private static int LCS(String s1,String s2,int i,int j){
+    /**
+     * 匹配的字符长度
+     * @param s1
+     * @param s2
+     * @param i
+     * @param j
+     * @return
+     */
+    private static int LCS(String s1, String s2, int i, int j){
         if(i>=s1.length()||j>=s2.length()) return 0;
         if(s1.charAt(i)==s2.charAt(j)) return LCS(s1,s2,i+1,j+1)+1;
         else
